@@ -10,22 +10,22 @@ const Home: NextPage = () => {
 
   return (
     <AppProvider>
-      <div className="min-h-screen bg-gray-100">
-        <header className="bg-white shadow">
-          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">
-              카드 갤러리
+      <div className="min-h-screen bg-white">
+        <header className="bg-white">
+          <div className="max-w-7xl mx-4 pt-6 flex justify-between items-center border-b border-solid border-black">
+            <h1 className="text-3l font-medium text-gray-900">
+            To All The Boys.
             </h1>
             <div>
               <button
                 onClick={() => setCurrentView('grid')}
-                className={`px-4 py-2 rounded-l-md ${currentView === 'grid' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                className={`px-4 py-2  ${currentView === 'grid' ? 'bg-black text-white' : 'bg-white text-gray-700'}`}
               >
                 Grid View
               </button>
               <button
                 onClick={() => setCurrentView('interactive')}
-                className={`px-4 py-2 rounded-r-md ${currentView === 'interactive' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                className={`px-4 py-2 ${currentView === 'interactive' ? 'bg-black text-white' : 'bg-white text-gray-700'}`}
               >
                 Interactive View
               </button>

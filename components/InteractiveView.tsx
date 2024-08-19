@@ -54,7 +54,7 @@ const InteractiveView: React.FC = () => {
 
   return (
     <motion.div 
-      className="relative w-full h-screen bg-gray-100 overflow-hidden"
+      className="relative w-full h-screen bg-white"
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 1 }}

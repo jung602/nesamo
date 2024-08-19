@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ card, isSelected, onClick, onClose }) => {
     <motion.div 
       layoutId={`card-${card.id}`}
       onClick={onClick}
-      className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer
+      className={`bg-white overflow-hidden cursor-pointer border-y border-solid border-black
                   ${isSelected ? 'fixed inset-0 z-50 flex items-center justify-center' : ''}`}
       style={{ maxWidth: isSelected ? '100%' : '300px', maxHeight: isSelected ? '100%' : '400px' }}
     >

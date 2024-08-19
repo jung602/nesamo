@@ -22,12 +22,12 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, filteredCards, onClose, onP
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black bg-opacity-100 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-white bg-opacity-100 flex items-center justify-center p-4 z-50"
       onClick={onClose}
     >
       <motion.div 
         layoutId={`card-${card.id}`}
-        className="bg-white rounded-lg shadow-xl max-w-md w-full relative"
+        className="bg-white max-w-md w-full relative border-y border-solid border-black"
         onClick={(e) => e.stopPropagation()}
       >
         <button

@@ -22,7 +22,6 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
 
   return (
     <div className="mb-4">
-      <h3 className="text-lg font-semibold mb-2">Filter by Feature Tags:</h3>
       <AnimatePresence mode="wait">
         {selectedCategory === null ? (
           <motion.div
@@ -36,7 +35,7 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
               <motion.button
                 key={category.name}
                 onClick={() => handleCategoryClick(category.name)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition-colors rounded-md"
+                className="pr-4 py-0 bg-white hover:bg-gray-200 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -58,7 +57,6 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
             >
               <X size={20} />
             </button>
-            <h4 className="text-md font-medium mb-2">{selectedCategory}</h4>
             <div className="flex flex-wrap gap-2">
               {featureTags
                 .find(category => category.name === selectedCategory)

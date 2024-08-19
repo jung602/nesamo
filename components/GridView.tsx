@@ -29,7 +29,7 @@ const GridView: React.FC = () => {
 
   return (
     <motion.div 
-      className="container mx-auto p-4"
+      className="relative w-full h-screen p-4"
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 1 }}
