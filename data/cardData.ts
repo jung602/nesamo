@@ -11,7 +11,7 @@ export type Card = {
     {
       id: 1,
       thumbnailImage: "/images/card1.jpg",
-      name: "캐릭터1",
+      name: "Dangbo",
       heightWeight: "180cm / 70kg",
       universe: "우주1",
       featureTags: ["성격이 나쁨", "배경1", "포지션1"]
@@ -19,15 +19,15 @@ export type Card = {
     {
       id: 2,
       thumbnailImage: "/images/card2.jpg",
-      name: "캐릭터2",
+      name: "Nezu",
       heightWeight: "165cm / 55kg",
       universe: "우주2",
       featureTags: ["착함", "배경2", "포지션2"]
     },
     {
       id: 3,
-      thumbnailImage: "/images/card2.jpg",
-      name: "캐릭터2",
+      thumbnailImage: "/images/card3.jpg",
+      name: "Kibana",
       heightWeight: "165cm / 55kg",
       universe: "우주2",
       featureTags: ["착함", "배경2", "포지션2"]

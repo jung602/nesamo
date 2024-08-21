@@ -126,7 +126,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   drop(dropRef);
 
   return (
-    <div ref={dropRef} className="relative w-full min-h-screen bg-gray-100 pt-24">
+    <div ref={dropRef} className="relative flex justify-between w-full min-h-screen bg-gray-100 pt-24">
       {state.filteredCards.map((card) => (
         view === 'interactive' ? (
           <DraggableCard

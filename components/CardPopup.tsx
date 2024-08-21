@@ -29,7 +29,7 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
             stiffness: 300,
             damping: 25
           }}
-          className="bg-white max-w-md w-full relative shadow-xl"
+          className="bg-white rounded max-w-md w-full relative shadow-xl"
           style={{ 
             width: '350px', 
             height: '450px', 
