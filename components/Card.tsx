@@ -1,58 +1,46 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card as CardType } from '../data/cardData';
-import { getCategoryColor } from '../data/featureTagData';
 
 interface CardProps {
   card: CardType;
-  isSelected: boolean;
   onClick: () => void;
-  onClose?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ card, isSelected, onClick, onClose }) => {
+const Card: React.FC<CardProps> = ({ card, onClick }) => {
+  const randomRotation = useMemo(() => Math.random() * 30 - 10, []);
+
+  // onClick이 함수인지 확인
+  if (typeof onClick !== 'function') {
+    console.error('onClick is not a function in Card component');
+    return null;
+  }
+
   return (
     <motion.div 
       layoutId={`card-${card.id}`}
-      onClick={onClick}
-      className={`bg-white overflow-hidden cursor-pointer border-y border-solid border-black
-                  ${isSelected ? 'fixed inset-0 z-50 flex items-center justify-center' : ''}`}
-      style={{ maxWidth: isSelected ? '100%' : '300px', maxHeight: isSelected ? '100%' : '400px' }}
+      onClick={() => {
+        console.log('Card component clicked:', card.id); // 디버깅을 위한 로그
+        onClick();
+      }}
+      className="bg-white overflow-hidden cursor-pointer shadow-md transform transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1"
+      style={{ 
+        width: '300px', 
+        height: '400px', 
+        padding: '10px',
+        rotate: `${randomRotation}deg`,
+      }}
     >
-      <motion.img 
-        src={card.thumbnailImage} 
-        alt={card.name} 
-        className={`w-full object-cover ${isSelected ? 'h-64' : 'h-48'}`}
-      />
-      <motion.div className={`p-4 ${isSelected ? 'overflow-y-auto' : ''}`}>
-        <h3 className="text-lg font-semibold text-gray-800">{card.name}</h3>
-        {isSelected && (
-          <>
-            <p className="text-gray-600 mt-2">{card.heightWeight}</p>
-            <p className="text-gray-600 mt-2">Universe: {card.universe}</p>
-            <div className="mt-4">
-              <h4 className="text-md font-semibold text-gray-800 mb-2">Feature Tags:</h4>
-              <div className="flex flex-wrap gap-2">
-                {card.featureTags.map((tag, index) => (
-                  <span 
-                    key={index}
-                    className="px-2 py-1 rounded text-sm text-white"
-                    style={{ backgroundColor: getCategoryColor(tag) || '#999' }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onClose?.(); }}
-              className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
-            >
-              Close
-            </button>
-          </>
-        )}
-      </motion.div>
+      <div className="bg-gray-100 h-full flex flex-col">
+        <motion.img 
+          src={card.thumbnailImage} 
+          alt={card.name} 
+          className="w-full h-[300px] object-cover"
+        />
+        <motion.div className="p-4 flex-grow flex flex-col justify-between">
+          <h3 className="text-2xl font-handwriting text-gray-800 mb-2">{card.name}</h3>
+        </motion.div>
+      </div>
     </motion.div>
   );
 };

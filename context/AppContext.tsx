@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Card } from '../data/cardData';
 import { loadCardData } from '../utils/dataLoader';
 import { FeatureTagData, featureTagData } from '../data/featureTagData';
@@ -47,21 +47,27 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setState(prevState => ({ ...prevState, filteredCards: newFilteredCards }));
   }, [state.cards, state.activeFilters]);
 
-  const setCurrentView = (view: 'grid' | 'interactive') => {
+  const setCurrentView = useCallback((view: 'grid' | 'interactive') => {
     setState(prevState => ({ ...prevState, currentView: view }));
-  };
+  }, []);
 
-  const toggleFilter = (tag: string) => {
+  const toggleFilter = useCallback((tag: string) => {
     setState(prevState => ({
       ...prevState,
       activeFilters: prevState.activeFilters.includes(tag)
         ? prevState.activeFilters.filter(t => t !== tag)
         : [...prevState.activeFilters, tag],
     }));
-  };
+  }, []);
+
+  const contextValue = React.useMemo(() => ({
+    state,
+    setCurrentView,
+    toggleFilter
+  }), [state, setCurrentView, toggleFilter]);
 
   return (
-    <AppContext.Provider value={{ state, setCurrentView, toggleFilter }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

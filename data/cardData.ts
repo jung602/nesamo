@@ -24,5 +24,13 @@ export type Card = {
       universe: "우주2",
       featureTags: ["착함", "배경2", "포지션2"]
     },
+    {
+      id: 3,
+      thumbnailImage: "/images/card2.jpg",
+      name: "캐릭터2",
+      heightWeight: "165cm / 55kg",
+      universe: "우주2",
+      featureTags: ["착함", "배경2", "포지션2"]
+    },
     // 추가 카드 데이터...
   ];
