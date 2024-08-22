@@ -25,10 +25,12 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragOriginRef = useRef<{ [key: number]: { x: number; y: number } }>({});
 
+  const TOP_OFFSET = 120; // Filter 영역의 높이에 해당하는 값
+
   const updateCardPositions = useCallback((cards: CardType[], containerWidth: number, containerHeight: number, forceUpdate: boolean = false) => {
     setPositions(prevPositions => {
       const newPositions: { [key: number]: CardPosition } = {};
-      cards.forEach((card) => {
+      cards.forEach((card, index) => {
         if (view === 'interactive') {
           const cardWidth = 150; // Half of the original size
           const cardHeight = 200; // Half of the original size
@@ -36,9 +38,10 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
           const maxY = containerHeight - cardHeight;
           
           if (forceUpdate || !prevPositions[card.id]) {
+            // Only generate new random positions if forced or if the card doesn't have a position yet
             newPositions[card.id] = {
-              x: Math.random() * (maxX - 20) + 10, // Ensure cards are within bounds
-              y: Math.random() * (maxY - 20) + 10,
+              x: Math.random() * (maxX - 20) + 10,
+              y: Math.random() * (maxY - 20 - TOP_OFFSET) + TOP_OFFSET + 10,
               rotation: Math.random() * 30 - 15,
             };
           } else {
@@ -48,7 +51,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
             
             if (x < 0) x = 10;
             if (x > maxX) x = maxX - 10;
-            if (y < 0) y = 10;
+            if (y < TOP_OFFSET) y = TOP_OFFSET + 10;
             if (y > maxY) y = maxY - 10;
             
             newPositions[card.id] = {
@@ -64,11 +67,11 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
           const cardHeight = 400;
           const gap = 20;
           const columnWidth = (containerWidth - (columns + 1) * gap) / columns;
-          const col = Object.keys(newPositions).length % columns;
-          const row = Math.floor(Object.keys(newPositions).length / columns);
+          const col = index % columns;
+          const row = Math.floor(index / columns);
           newPositions[card.id] = {
             x: gap + col * (columnWidth + gap),
-            y: gap + row * (cardHeight + gap),
+            y: TOP_OFFSET + gap + row * (cardHeight + gap),
             rotation: 0,
           };
         }
@@ -81,27 +84,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     const handleResize = () => {
       if (containerRef.current) {
         const { clientWidth, clientHeight } = containerRef.current;
-        if (view === 'interactive') {
-          // Move cards inside the container if they're outside after resize
-          setPositions(prevPositions => {
-            const newPositions = { ...prevPositions };
-            Object.keys(newPositions).forEach(id => {
-              const cardId = parseInt(id);
-              const cardWidth = 150;
-              const cardHeight = 200;
-              const maxX = clientWidth - cardWidth;
-              const maxY = clientHeight - cardHeight;
-
-              if (newPositions[cardId].x < 0) newPositions[cardId].x = 10;
-              if (newPositions[cardId].x > maxX) newPositions[cardId].x = maxX - 10;
-              if (newPositions[cardId].y < 0) newPositions[cardId].y = 10;
-              if (newPositions[cardId].y > maxY) newPositions[cardId].y = maxY - 10;
-            });
-            return newPositions;
-          });
-        } else {
-          updateCardPositions(state.filteredCards, clientWidth, clientHeight, true);
-        }
+        updateCardPositions(state.filteredCards, clientWidth, clientHeight, false);
       }
     };
 
@@ -117,12 +100,12 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     }
   }, [view, updateCardPositions, state.filteredCards]);
 
+  
   const handleDragStart = (event: React.PointerEvent<HTMLDivElement>, cardId: number) => {
     if (view === 'interactive') {
       const cardElement = event.currentTarget;
       const rect = cardElement.getBoundingClientRect();
       
-      // Calculate the offset from the mouse position to the card's center
       dragOriginRef.current[cardId] = {
         x: event.clientX - (rect.left + rect.width / 2),
         y: event.clientY - (rect.top + rect.height / 2)
@@ -140,14 +123,12 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const maxX = clientWidth - cardWidth;
       const maxY = clientHeight - cardHeight;
       
-      // Calculate new position based on the mouse position and offset
       let newX = info.point.x - offsetX - cardWidth / 2;
       let newY = info.point.y - offsetY - cardHeight / 2;
 
-      // Ensure the card stays within the container
       if (newX < 0) newX = 0;
       if (newX > maxX) newX = maxX;
-      if (newY < 0) newY = 0;
+      if (newY < TOP_OFFSET) newY = TOP_OFFSET;
       if (newY > maxY) newY = maxY;
 
       setPositions(prev => ({
@@ -170,13 +151,12 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const maxY = clientHeight - cardHeight;
       const { x: offsetX, y: offsetY } = dragOriginRef.current[cardId];
 
-      // Calculate final position based on the mouse position and offset
       let x = info.point.x - offsetX - cardWidth / 2;
       let y = info.point.y - offsetY - cardHeight / 2;
 
       if (x < 0) x = 0;
       if (x > maxX) x = maxX;
-      if (y < 0) y = 0;
+      if (y < TOP_OFFSET) y = TOP_OFFSET;
       if (y > maxY) y = maxY;
 
       setPositions(prev => ({
@@ -218,10 +198,24 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     mass: 1,
   };
 
+  const containerStyle: React.CSSProperties = {
+    position: 'relative',
+    width: '100%',
+    height: view === 'interactive' ? '100vh' : 'auto',
+    minHeight: '100vh',
+    overflowY: view === 'interactive' ? 'hidden' : 'auto',
+    overflowX: 'hidden',
+    background: 'white',
+  };
+
   return (
     <motion.div 
       ref={containerRef}
-      className="relative w-full mt-24 min-h-screen bg-white overflow-hidden"
+      className="relative w-full min-h-screen bg-white overflow-hidden"
+      style={{
+        height: view === 'interactive' ? '100vh' : 'auto',
+        overflowY: view === 'interactive' ? 'hidden' : 'auto',
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -233,7 +227,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
           onFilterChange={toggleFilter}
         />
       </div>
-      <div className="pt-24">
+      <div className="pt-48">
         <AnimatePresence>
           {state.filteredCards.map((card: CardType) => (
             <motion.div
@@ -257,7 +251,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
             >
               <Card
                 card={card}
-                onClick={() => {}} // Card 컴포넌트 내부 클릭 이벤트 비활성화
+                onClick={() => {}}
               />
             </motion.div>
           ))}

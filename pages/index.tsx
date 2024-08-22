@@ -26,9 +26,11 @@ const Home: NextPage = () => {
         <div className="min-h-screen bg-white">
           <header className="fixed top-0 left-0 right-0 screen border-b border-solid border-black z-30">
             <div className="max-w-7xl mx-4 pt-6 pb-1 flex justify-between items-center">
+            <a href="/">
               <h1 className="text-base font-medium text-black">
                 To All The Boys.
               </h1>
+              </a>
               <button
                 onClick={handleViewChange}
                 className="text-sm text-black px-4 py-1"

@@ -8,7 +8,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ card, onClick }) => {
-  const randomRotation = useMemo(() => Math.random() * 30 - 10, []);
+  const randomRotation = useMemo(() => Math.random() * 30 - 15, []);
 
   // onClick이 함수인지 확인
   if (typeof onClick !== 'function') {
