@@ -4,13 +4,21 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppProvider } from '../context/AppContext';
 import CardViewTransition from '../components/CardViewTransition';
+import DataVisualizationDashboard from '../components/DataVisualizationDashboard';
+
 
 const Home: NextPage = () => {
   const [view, setView] = useState<'grid' | 'interactive'>('grid');
+  const [showData, setShowData] = useState(false);
 
   const handleViewChange = () => {
     setView(prevView => prevView === 'grid' ? 'interactive' : 'grid');
   };
+
+  const handleDataToggle = () => {
+    setShowData(prev => !prev);
+  };
+
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -27,10 +35,20 @@ const Home: NextPage = () => {
               >
                 {view === 'grid' ? 'B' : 'A'} View
               </button>
+              <button
+                onClick={handleDataToggle}
+                className="text-sm text-black px-4 py-1"
+              >
+                {showData ? 'Cards' : 'Data'}
+              </button>
             </div>
           </header>
           <main>
-            <CardViewTransition view={view} />
+          {showData ? (
+              <DataVisualizationDashboard />
+            ) : (
+              <CardViewTransition view={view} />
+            )}
           </main>
         </div>
       </AppProvider>

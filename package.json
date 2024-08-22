@@ -16,7 +16,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
-    "react-draggable": "^4.4.6"
+    "react-draggable": "^4.4.6",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@types/node": "^20",
