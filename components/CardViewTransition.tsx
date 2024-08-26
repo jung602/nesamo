@@ -25,57 +25,48 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragOriginRef = useRef<{ [key: number]: { x: number; y: number } }>({});
 
-  const TOP_OFFSET = 120; // Filter 영역의 높이에 해당하는 값
+  const TOP_OFFSET = 120; // Filter area height
 
   const updateCardPositions = useCallback((cards: CardType[], containerWidth: number, containerHeight: number, forceUpdate: boolean = false) => {
     setPositions(prevPositions => {
       const newPositions: { [key: number]: CardPosition } = {};
-      cards.forEach((card, index) => {
-        if (view === 'interactive') {
-          const cardWidth = 150; // Half of the original size
-          const cardHeight = 200; // Half of the original size
-          const maxX = containerWidth - cardWidth;
-          const maxY = containerHeight - cardHeight;
-          
-          if (forceUpdate || !prevPositions[card.id]) {
-            // Only generate new random positions if forced or if the card doesn't have a position yet
-            newPositions[card.id] = {
-              x: Math.random() * (maxX - 20) + 10,
-              y: Math.random() * (maxY - 20 - TOP_OFFSET) + TOP_OFFSET + 10,
-              rotation: Math.random() * 30 - 15,
-            };
-          } else {
-            // Adjust position if card is out of bounds
-            let x = prevPositions[card.id].x;
-            let y = prevPositions[card.id].y;
-            
-            if (x < 0) x = 10;
-            if (x > maxX) x = maxX - 10;
-            if (y < TOP_OFFSET) y = TOP_OFFSET + 10;
-            if (y > maxY) y = maxY - 10;
-            
-            newPositions[card.id] = {
-              x,
-              y,
-              rotation: prevPositions[card.id].rotation,
-            };
-          }
-        } else {
-          // Grid view logic
-          const columns = containerWidth >= 1280 ? 4 : containerWidth >= 768 ? 3 : containerWidth >= 640 ? 2 : 1;
-          const cardWidth = 300;
-          const cardHeight = 400;
-          const gap = 20;
-          const columnWidth = (containerWidth - (columns + 1) * gap) / columns;
+      if (view === 'grid') {
+        const cardWidth = 300; // Original card width
+        const cardHeight = 400; // Original card height
+        const gap = 16; // Gap between cards
+        
+        // Calculate the number of columns based on container width
+        const columns = Math.max(Math.floor((containerWidth + gap) / (cardWidth + gap)), 1);
+        
+        // Calculate the total width of all cards and gaps
+        const totalCardsWidth = columns * cardWidth + (columns - 1) * gap;
+        
+        // Calculate the left offset to center the grid
+        const leftOffset = (containerWidth - totalCardsWidth) / 2;
+
+        cards.forEach((card, index) => {
           const col = index % columns;
           const row = Math.floor(index / columns);
           newPositions[card.id] = {
-            x: gap + col * (columnWidth + gap),
+            x: leftOffset + col * (cardWidth + gap),
             y: TOP_OFFSET + gap + row * (cardHeight + gap),
             rotation: 0,
           };
-        }
-      });
+        });
+      } else {
+        // Interactive view logic (unchanged)
+        cards.forEach((card) => {
+          if (forceUpdate || !prevPositions[card.id]) {
+            newPositions[card.id] = {
+              x: Math.random() * (containerWidth - 150),
+              y: Math.random() * (containerHeight - 200 - TOP_OFFSET) + TOP_OFFSET,
+              rotation: Math.random() * 30 - 15,
+            };
+          } else {
+            newPositions[card.id] = prevPositions[card.id];
+          }
+        });
+      }
       return newPositions;
     });
   }, [view]);
@@ -256,6 +247,9 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
             </motion.div>
           ))}
         </AnimatePresence>
+        <div
+        className="absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
+        ></div>
       </div>
       <AnimatePresence>
         {selectedCardId !== null && (

@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         <motion.img 
           src={card.thumbnailImage} 
           alt={card.name} 
-          className="w-full h-[300px] object-cover bg-gray-100"
+          className="shadow-inner w-full h-[300px] object-cover bg-gray-100"
         />
         <motion.div className="p-4 flex-grow flex flex-col justify-between">
           <h3 className="text-xl font-semibold font-handwriting text-gray-800 mb-2">{card.name}</h3>
