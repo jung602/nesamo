@@ -5,6 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppProvider } from '../context/AppContext';
 import CardViewTransition from '../components/CardViewTransition';
 import DataVisualizationDashboard from '../components/DataVisualizationDashboard';
+import Image from 'next/image';
 
 
 const Home: NextPage = () => {
@@ -25,23 +26,23 @@ const Home: NextPage = () => {
       <AppProvider>
         <div className="min-h-screen bg-white">
           <header className="w-screen flex justify-center backdrop-blur-xl bg-white/30 fixed top-0 left-0 right-0 screen border-b border-solid border-black z-30">
-            <div className="max-w-screen-xl w-full mx-4 pt-6 pb-1 flex justify-between items-center">
-                <a 
-                href="/"
-                className="flex-none text-base font-medium text-black">
-                  <h1>
-                    To All The Boys.
-                  </h1>
-                </a>
+            <a 
+                  href="/"
+                  className="absolute -translate-x-1/2 left-1/2 text-base font-medium text-black pt-6">
+                    <h1>
+                      To All The Boys.
+                    </h1>
+            </a>
+            <div className="max-w-screen-xl w-full mx-4 pt-6 pb-2 flex justify-between items-center">
                 <button
                   onClick={handleViewChange}
-                  className="grow text-sm text-right text-black px-4 py-1"
+                  className="text-sm text-right text-black"
                 >
-                  {view === 'grid' ? 'B' : 'A'} View
+                  {view === 'grid' ? <Image src="./suffle.svg" alt="Shuffle" width={24} height={24}/> : <Image src="./list.svg" alt="List" width={24} height={24}/>}
                 </button>
                 <button
                   onClick={handleDataToggle}
-                  className="flex-none text-sm text-black px-4 py-1"
+                  className="flex-none text-sm text-black"
                 >
                   {showData ? 'Cards' : 'Data'}
                 </button>
