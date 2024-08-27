@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, AnimatePresence, PanInfo, MotionStyle } from 'framer-motion';
 import { useAppState } from '../context/AppContext';
 import Card from './Card';
 import CardPopup from './CardPopup';
@@ -26,25 +26,25 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   const dragOriginRef = useRef<{ [key: number]: { x: number; y: number } }>({});
 
   const TOP_OFFSET = 120; // Filter area height
+  const BOTTOM_MARGIN = 64; // Bottom margin for grid view
+  const CARD_WIDTH = 300;
+  const CARD_HEIGHT = 400;
+  const GAP = 16;
 
   const updateCardPositions = useCallback((cards: CardType[], containerWidth: number, containerHeight: number, forceUpdate: boolean = false) => {
     setPositions(prevPositions => {
       const newPositions: { [key: number]: CardPosition } = {};
       if (view === 'grid') {
-        // Grid view logic (unchanged)
-        const cardWidth = 300;
-        const cardHeight = 400;
-        const gap = 16;
-        const columns = Math.max(Math.floor((containerWidth + gap) / (cardWidth + gap)), 1);
-        const totalCardsWidth = columns * cardWidth + (columns - 1) * gap;
+        const columns = Math.max(Math.floor((containerWidth + GAP) / (CARD_WIDTH + GAP)), 1);
+        const totalCardsWidth = columns * CARD_WIDTH + (columns - 1) * GAP;
         const leftOffset = (containerWidth - totalCardsWidth) / 2;
 
         cards.forEach((card, index) => {
           const col = index % columns;
           const row = Math.floor(index / columns);
           newPositions[card.id] = {
-            x: leftOffset + col * (cardWidth + gap),
-            y: TOP_OFFSET + gap + row * (cardHeight + gap),
+            x: leftOffset + col * (CARD_WIDTH + GAP),
+            y: TOP_OFFSET + GAP + row * (CARD_HEIGHT + GAP),
             rotation: 0,
           };
         });
@@ -63,7 +63,6 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
               rotation: Math.random() * 30 - 15,
             };
           } else {
-            // Adjust position if the card is outside the container
             let { x, y, rotation } = prevPositions[card.id];
             if (x < 0) x = 0;
             if (x > maxX) x = maxX;
@@ -96,8 +95,6 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       updateCardPositions(state.filteredCards, clientWidth, clientHeight, true);
     }
   }, [view, updateCardPositions, state.filteredCards]);
-
-  // Rest of the component remains unchanged
 
   const handleDragStart = (event: React.PointerEvent<HTMLDivElement>, cardId: number) => {
     if (view === 'interactive') {
@@ -196,25 +193,39 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     mass: 1,
   };
 
-  const containerStyle: React.CSSProperties = {
-    position: 'relative',
-    width: '100%',
-    height: view === 'interactive' ? '100vh' : 'auto',
-    minHeight: '100vh',
-    overflowY: view === 'interactive' ? 'hidden' : 'auto',
-    overflowX: 'hidden',
-    background: 'white',
-  };
+  const getContainerStyle = useCallback((): MotionStyle => {
+    if (view === 'interactive') {
+      return {
+        height: '100vh',
+        overflow: 'hidden',
+      };
+    } else {
+      return {
+        minHeight: '100vh',
+        overflowX: 'hidden' as const,
+        overflowY: 'auto' as const,
+      };
+    }
+  }, [view]);
 
+  const getGridContainerStyle = useCallback((): React.CSSProperties => {
+    if (view === 'grid') {
+      const columns = Math.max(Math.floor((containerRef.current?.clientWidth ?? 0 + GAP) / (CARD_WIDTH + GAP)), 1);
+      const rows = Math.ceil(state.filteredCards.length / columns);
+      return {
+        height: `${TOP_OFFSET + GAP + rows * (CARD_HEIGHT + GAP) + BOTTOM_MARGIN}px`,
+      };
+    }
+    return {};
+  }, [view, state.filteredCards.length]);
+
+  
   return (
-    <>
+    <div className="relative w-full">
       <motion.div 
         ref={containerRef}
-        className="relative w-full min-h-screen bg-white overflow-hidden"
-        style={{
-          height: view === 'interactive' ? '100vh' : 'auto',
-          overflowY: view === 'interactive' ? 'hidden' : 'auto',
-        }}
+        className="relative w-full"
+        style={getContainerStyle()}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -226,7 +237,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
             onFilterChange={toggleFilter}
           />
         </div>
-        <div>
+        <div style={getGridContainerStyle()}>
           <AnimatePresence>
             {state.filteredCards.map((card: CardType) => (
               <motion.div
@@ -265,8 +276,15 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
           )}
         </AnimatePresence>
       </motion.div>
-      <div className="absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-    </>
+      <div 
+        className="absolute left-0 right-0 top-0 bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
+        style={{
+          height: '100%',
+          minHeight: '100vh',
+          zIndex: -1,
+        }}
+      />
+    </div>
   );
 };
 

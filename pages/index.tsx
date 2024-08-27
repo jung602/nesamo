@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <AppProvider>
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen">
           <header className="w-screen flex justify-center backdrop-blur-xl bg-white/30 fixed top-0 left-0 right-0 screen border-b border-solid border-black z-30">
             <a 
                   href="/"
