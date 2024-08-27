@@ -31,17 +31,12 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     setPositions(prevPositions => {
       const newPositions: { [key: number]: CardPosition } = {};
       if (view === 'grid') {
-        const cardWidth = 300; // Original card width
-        const cardHeight = 400; // Original card height
-        const gap = 16; // Gap between cards
-        
-        // Calculate the number of columns based on container width
+        // Grid view logic (unchanged)
+        const cardWidth = 300;
+        const cardHeight = 400;
+        const gap = 16;
         const columns = Math.max(Math.floor((containerWidth + gap) / (cardWidth + gap)), 1);
-        
-        // Calculate the total width of all cards and gaps
         const totalCardsWidth = columns * cardWidth + (columns - 1) * gap;
-        
-        // Calculate the left offset to center the grid
         const leftOffset = (containerWidth - totalCardsWidth) / 2;
 
         cards.forEach((card, index) => {
@@ -54,16 +49,27 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
           };
         });
       } else {
-        // Interactive view logic (unchanged)
+        // Interactive view logic
+        const cardWidth = 150;
+        const cardHeight = 200;
+        const maxX = containerWidth - cardWidth;
+        const maxY = containerHeight - cardHeight;
+
         cards.forEach((card) => {
           if (forceUpdate || !prevPositions[card.id]) {
             newPositions[card.id] = {
-              x: Math.random() * (containerWidth - 150),
-              y: Math.random() * (containerHeight - 200 - TOP_OFFSET) + TOP_OFFSET,
+              x: Math.random() * maxX,
+              y: Math.random() * (maxY - TOP_OFFSET) + TOP_OFFSET,
               rotation: Math.random() * 30 - 15,
             };
           } else {
-            newPositions[card.id] = prevPositions[card.id];
+            // Adjust position if the card is outside the container
+            let { x, y, rotation } = prevPositions[card.id];
+            if (x < 0) x = 0;
+            if (x > maxX) x = maxX;
+            if (y < TOP_OFFSET) y = TOP_OFFSET;
+            if (y > maxY) y = maxY;
+            newPositions[card.id] = { x, y, rotation };
           }
         });
       }
@@ -91,12 +97,13 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     }
   }, [view, updateCardPositions, state.filteredCards]);
 
-  
+  // Rest of the component remains unchanged
+
   const handleDragStart = (event: React.PointerEvent<HTMLDivElement>, cardId: number) => {
     if (view === 'interactive') {
       const cardElement = event.currentTarget;
       const rect = cardElement.getBoundingClientRect();
-      
+
       dragOriginRef.current[cardId] = {
         x: event.clientX - (rect.left + rect.width / 2),
         y: event.clientY - (rect.top + rect.height / 2)
@@ -113,7 +120,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const cardHeight = 200;
       const maxX = clientWidth - cardWidth;
       const maxY = clientHeight - cardHeight;
-      
+
       let newX = info.point.x - offsetX - cardWidth / 2;
       let newY = info.point.y - offsetY - cardHeight / 2;
 
@@ -200,66 +207,66 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   };
 
   return (
-    <motion.div 
-      ref={containerRef}
-      className="relative w-full min-h-screen bg-white overflow-hidden"
-      style={{
-        height: view === 'interactive' ? '100vh' : 'auto',
-        overflowY: view === 'interactive' ? 'hidden' : 'auto',
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className="fixed top-14 left-0 right-0 z-20 bg-white pt-2">
-        <Filter 
-          featureTags={state.featureTags as FeatureTagData}
-          activeFilters={state.activeFilters}
-          onFilterChange={toggleFilter}
-        />
-      </div>
-      <div className="pt-48">
-        <AnimatePresence>
-          {state.filteredCards.map((card: CardType) => (
-            <motion.div
-              key={card.id}
-              style={getCardStyle(card)}
-              initial={view === 'grid' ? { opacity: 0, scale: 0.8 } : undefined}
-              animate={view === 'grid' 
-                ? { opacity: 1, scale: 1, ...getCardStyle(card) } 
-                : { scale: 0.5, rotate: positions[card.id]?.rotation || 0, ...getCardStyle(card) }
-              }
-              exit={view === 'grid' ? { opacity: 0, scale: 0.8 } : undefined}
-              transition={isDragging[card.id] ? { duration: 0 } : (view === 'grid' ? gridTransition : { type: 'spring', stiffness: 300, damping: 25 })}
-              drag={view === 'interactive'}
-              dragMomentum={false}
-              dragElastic={0}
-              onPointerDown={(e) => handleDragStart(e, card.id)}
-              onDrag={(_, info) => handleDrag(card.id, _, info)}
-              onDragEnd={(_, info) => handleDragEnd(card.id, _, info)}
-              onClick={() => handleCardClick(card.id)}
-              whileDrag={{ scale: 0.6, zIndex: 10, transition: { duration: 0 } }}
-            >
-              <Card
-                card={card}
-                onClick={() => {}}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-        <div
-        className="absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
-        ></div>
-      </div>
-      <AnimatePresence>
-        {selectedCardId !== null && (
-          <CardPopup
-            card={state.filteredCards.find(card => card.id === selectedCardId)!}
-            onClose={handleClosePopup}
+    <>
+      <motion.div 
+        ref={containerRef}
+        className="relative w-full min-h-screen bg-white overflow-hidden"
+        style={{
+          height: view === 'interactive' ? '100vh' : 'auto',
+          overflowY: view === 'interactive' ? 'hidden' : 'auto',
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="fixed top-14 left-0 right-0 z-20 pt-4">
+          <Filter 
+            featureTags={state.featureTags as FeatureTagData}
+            activeFilters={state.activeFilters}
+            onFilterChange={toggleFilter}
           />
-        )}
-      </AnimatePresence>
-    </motion.div>
+        </div>
+        <div>
+          <AnimatePresence>
+            {state.filteredCards.map((card: CardType) => (
+              <motion.div
+                key={card.id}
+                style={getCardStyle(card)}
+                initial={view === 'grid' ? { opacity: 0, scale: 0.8 } : undefined}
+                animate={view === 'grid' 
+                  ? { opacity: 1, scale: 1, ...getCardStyle(card) } 
+                  : { scale: 0.5, rotate: positions[card.id]?.rotation || 0, ...getCardStyle(card) }
+                }
+                exit={view === 'grid' ? { opacity: 0, scale: 0.8 } : undefined}
+                transition={isDragging[card.id] ? { duration: 0 } : (view === 'grid' ? gridTransition : { type: 'spring', stiffness: 300, damping: 25 })}
+                drag={view === 'interactive'}
+                dragMomentum={false}
+                dragElastic={0}
+                onPointerDown={(e) => handleDragStart(e, card.id)}
+                onDrag={(_, info) => handleDrag(card.id, _, info)}
+                onDragEnd={(_, info) => handleDragEnd(card.id, _, info)}
+                onClick={() => handleCardClick(card.id)}
+                whileDrag={{ scale: 0.6, zIndex: 10, transition: { duration: 0 } }}
+              >
+                <Card
+                  card={card}
+                  onClick={() => {}}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+        <AnimatePresence>
+          {selectedCardId !== null && (
+            <CardPopup
+              card={state.filteredCards.find(card => card.id === selectedCardId)!}
+              onClose={handleClosePopup}
+            />
+          )}
+        </AnimatePresence>
+      </motion.div>
+      <div className="absolute inset-0 h-full w-full bg-white bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+    </>
   );
 };
 

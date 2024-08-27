@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeatureTagData } from '../data/featureTagData';
-import { X } from 'lucide-react';
 
 interface FilterProps {
   featureTags: FeatureTagData;
@@ -13,72 +12,69 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleCategoryClick = (categoryName: string) => {
-    setSelectedCategory(categoryName);
+    setSelectedCategory(prev => prev === categoryName ? null : categoryName);
   };
 
-  const handleClose = () => {
-    setSelectedCategory(null);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0 }
   };
 
   return (
-    <div className="mb-2 text-sm">
-      <AnimatePresence mode="wait">
-        {selectedCategory === null ? (
-          <motion.div
-            key="categories"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex justify-center gap-2"
-          >
-            {featureTags.map((category) => (
-              <motion.button
-                key={category.name}
-                onClick={() => handleCategoryClick(category.name)}
-                className=" pr-4 py-0 bg-white hover:bg-gray-200 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {category.name}
-              </motion.button>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="tags"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative bg-white p-4 rounded-md shadow-md"
-          >
-            <button
-              onClick={handleClose}
-              className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200 transition-colors"
+    <div className="mb-4 text-sm">
+      <div className="flex justify-center gap-2 mb-2 flex-wrap">
+        {featureTags.map((category) => (
+          <div key={category.name} className="flex flex-col items-center">
+            <motion.button
+              onClick={() => handleCategoryClick(category.name)}
+              className="px-3 py-2 backdrop-blur-lg rounded-md border borderbg-white/[.05] hover:hover:backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <X size={20} />
-            </button>
-            <div className="flex flex-wrap gap-2">
-              {featureTags
-                .find(category => category.name === selectedCategory)
-                ?.tags.map((tag) => (
-                  <motion.button
-                    key={tag}
-                    onClick={() => onFilterChange(tag)}
-                    className={`px-2 py-1 rounded text-sm ${
-                      activeFilters.includes(tag)
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {tag}
-                  </motion.button>
-                ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {category.name}
+            </motion.button>
+            <AnimatePresence>
+              {selectedCategory === category.name && (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="mt-2 overflow-hidden"
+                >
+                  <div className="p-2 flex flex-col items-start space-y-2">
+                    {category.tags.map((tag) => (
+                      <motion.div key={tag} variants={itemVariants} className="w-full">
+                        <label className="flex items-center space-x-2 cursor-pointer py-2 pl-1 pr-3 bg-gray-50 border hover:bg-gray-100 rounded">
+                          <input
+                            type="checkbox"
+                            checked={activeFilters.includes(tag)}
+                            onChange={() => onFilterChange(tag)}
+                            className="hidden"
+                          />
+                          <span className={`w-4 h-4 border border-gray-300 rounded-full inline-block ${activeFilters.includes(tag) ? 'bg-black' : 'bg-white'}`}></span>
+                          <span>{tag}</span>
+                        </label>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

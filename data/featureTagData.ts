@@ -8,19 +8,19 @@ export type FeatureTagData = FeatureTagCategory[];
 
 export let featureTagData: FeatureTagData = [
   {
-    name: "Character Category",
+    name: "Character",
     color: "pink",
-    tags: ["성격이 나쁨", "예민함", "착함"]
+    tags: ["Mean", "Kind", "Crazy"]
   },
   {
-    name: "Background Category",
+    name: "Role",
     color: "blue",
-    tags: ["도시", "시골", "우주"]
+    tags: ["Duke", "Rich", "Royal", "Villain"]
   },
   {
-    name: "Position Category",
+    name: "Look",
     color: "green",
-    tags: ["리더", "서포터", "공격수"]
+    tags: ["Black Hair", "White Hair", "Green Eyes"]
   }
 ];
 
