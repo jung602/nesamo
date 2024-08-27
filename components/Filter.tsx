@@ -59,11 +59,11 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
     <div className="mb-4 text-sm">
       <div className="flex justify-center mb-2">
         <button onClick={toggleAllCategories} 
-        className="p-2 border border-gray/50 bg-white/50 rounded-full hover:bg-black/10 backdrop-blur-xl ">
+        className="p-2 border border-gray/50 bg-white/50 rounded-full hover:bg-black/10 backdrop-blur-xl">
           <img 
             src={isExpanded ? "close.svg" : "filter.svg"} 
             alt={isExpanded ? "Close" : "Filter"} 
-            className={isExpanded ? "w-6 h-6 p-1" : "w-6 h-6"} 
+            className={isExpanded ? "w-5 h-5 p-1" : "w-5 h-5"} 
           />
         </button>
       </div>

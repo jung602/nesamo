@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card as CardType } from '../data/cardData';
 import { getCategoryColor } from '../data/featureTagData';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 interface CardPopupProps {
   card: CardType;
@@ -49,13 +50,12 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
               <p className="text-sm text-gray-600 mb-1">{card.heightWeight}</p>
               <p className="text-sm text-gray-600 mb-2">Universe: {card.universe}</p>
               <div className="mb-2">
-                <h3 className="text-sm font-semibold text-gray-800 mb-1">Feature Tags:</h3>
                 <div className="flex flex-wrap gap-1">
                   {card.featureTags.map((tag, index) => (
                     <span 
                       key={index}
-                      className="px-2 py-0.5 rounded text-xs text-white"
-                      style={{ backgroundColor: getCategoryColor(tag) || '#999' }}
+                      className="px-2 py-1 rounded text-xs text-white"
+                      style={{ backgroundColor: getCategoryColor(tag) || '#000' }}
                     >
                       {tag}
                     </span>
@@ -66,9 +66,9 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="absolute top-2 right-2 p-1 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 transition-colors"
+            className="absolute -bottom-10 right-1/2 translate-x-1/2 p-2 rounded-full bg-white/70 border-b backdrop-blur-xl hover:rotate-12 hover:bg-white/50 transition-all"
           >
-            <X size={20} />
+          <Image src="./close.svg" alt="Close" width={14} height={14}/>
           </button>
         </motion.div>
       </motion.div>

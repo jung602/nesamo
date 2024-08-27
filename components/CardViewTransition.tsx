@@ -245,7 +245,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div className="fixed top-14 left-0 right-0 z-20 pt-4">
+        <div className="fixed top-12 left-0 right-0 z-20 pt-4">
           <Filter 
             featureTags={state.featureTags as FeatureTagData}
             activeFilters={state.activeFilters}
