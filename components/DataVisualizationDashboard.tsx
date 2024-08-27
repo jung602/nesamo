@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { cardData, Card } from '../data/cardData';
 import { featureTagData, getAllTags, getCategoryColor } from '../data/featureTagData';
@@ -7,11 +7,20 @@ import Filter from './Filter';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
-const DataVisualizationDashboard: React.FC = () => {
+const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const allTags = useMemo(() => getAllTags(), []);
+
+  useEffect(() => {
+    if (isVisible) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 500); // Animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
 
   // 1. Most used tags
   const tagCounts = useMemo(() => {
@@ -71,8 +80,12 @@ const DataVisualizationDashboard: React.FC = () => {
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Data Visualization Dashboard</h1>
+    <div className={`fixed inset-0 bg-white overflow-auto transition-transform duration-500 ease-in-out ${
+      isVisible ? 'translate-y-0' : '-translate-y-full'
+    } ${isAnimating ? 'animate-curtain-down' : ''}`} style={{ zIndex: 30 }}>
+      <div className="p-4 max-w-7xl mx-auto pt-20">
+        <h1 className="text-3xl font-bold mb-6">Data Visualization Dashboard</h1>
+        
 
       {/* 1. Most used tags */}
       <section className="mb-8">
@@ -167,6 +180,7 @@ const DataVisualizationDashboard: React.FC = () => {
       {selectedCard && (
         <CardPopup card={selectedCard} onClose={() => setSelectedCard(null)} />
       )}
+    </div>
     </div>
   );
 };

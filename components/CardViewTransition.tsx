@@ -24,12 +24,16 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   const [isDragging, setIsDragging] = useState<{ [key: number]: boolean }>({});
   const containerRef = useRef<HTMLDivElement>(null);
   const dragOriginRef = useRef<{ [key: number]: { x: number; y: number } }>({});
+  const dragStartTimeRef = useRef<number>(0);
+  const [zIndexOrder, setZIndexOrder] = useState<number[]>([]);
 
   const TOP_OFFSET = 120; // Filter area height
   const BOTTOM_MARGIN = 64; // Bottom margin for grid view
   const CARD_WIDTH = 300;
   const CARD_HEIGHT = 400;
   const GAP = 16;
+  const DRAG_THRESHOLD = 5; // Pixels of movement to consider as drag
+  const CLICK_THRESHOLD = 200; // Milliseconds to consider as click
 
   const updateCardPositions = useCallback((cards: CardType[], containerWidth: number, containerHeight: number, forceUpdate: boolean = false) => {
     setPositions(prevPositions => {
@@ -63,12 +67,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
               rotation: Math.random() * 30 - 15,
             };
           } else {
-            let { x, y, rotation } = prevPositions[card.id];
-            if (x < 0) x = 0;
-            if (x > maxX) x = maxX;
-            if (y < TOP_OFFSET) y = TOP_OFFSET;
-            if (y > maxY) y = maxY;
-            newPositions[card.id] = { x, y, rotation };
+            newPositions[card.id] = { ...prevPositions[card.id] };
           }
         });
       }
@@ -94,6 +93,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const { clientWidth, clientHeight } = containerRef.current;
       updateCardPositions(state.filteredCards, clientWidth, clientHeight, true);
     }
+    setZIndexOrder(state.filteredCards.map(card => card.id));
   }, [view, updateCardPositions, state.filteredCards]);
 
   const handleDragStart = (event: React.PointerEvent<HTMLDivElement>, cardId: number) => {
@@ -102,10 +102,14 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const rect = cardElement.getBoundingClientRect();
 
       dragOriginRef.current[cardId] = {
-        x: event.clientX - (rect.left + rect.width / 2),
-        y: event.clientY - (rect.top + rect.height / 2)
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
       };
-      setIsDragging(prev => ({ ...prev, [cardId]: true }));
+      setIsDragging(prev => ({ ...prev, [cardId]: false }));
+      dragStartTimeRef.current = Date.now();
+
+      // Move the dragged card to the end of the zIndexOrder array
+      setZIndexOrder(prev => [...prev.filter(id => id !== cardId), cardId]);
     }
   };
 
@@ -115,16 +119,18 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const { clientWidth, clientHeight } = containerRef.current;
       const cardWidth = 150;
       const cardHeight = 200;
-      const maxX = clientWidth - cardWidth;
-      const maxY = clientHeight - cardHeight;
 
-      let newX = info.point.x - offsetX - cardWidth / 2;
-      let newY = info.point.y - offsetY - cardHeight / 2;
+      let newX = info.point.x - offsetX;
+      let newY = info.point.y - offsetY;
 
-      if (newX < 0) newX = 0;
-      if (newX > maxX) newX = maxX;
-      if (newY < TOP_OFFSET) newY = TOP_OFFSET;
-      if (newY > maxY) newY = maxY;
+      // Allow dragging to the left edge and top (including the fixed area)
+      newX = Math.max(0, Math.min(newX, clientWidth - cardWidth));
+      newY = Math.max(0, Math.min(newY, clientHeight - cardHeight));
+
+      const dragDistance = Math.sqrt(Math.pow(info.offset.x, 2) + Math.pow(info.offset.y, 2));
+      if (dragDistance > DRAG_THRESHOLD) {
+        setIsDragging(prev => ({ ...prev, [cardId]: true }));
+      }
 
       setPositions(prev => ({
         ...prev,
@@ -142,17 +148,14 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       const { clientWidth, clientHeight } = containerRef.current;
       const cardWidth = 150;
       const cardHeight = 200;
-      const maxX = clientWidth - cardWidth;
-      const maxY = clientHeight - cardHeight;
       const { x: offsetX, y: offsetY } = dragOriginRef.current[cardId];
 
-      let x = info.point.x - offsetX - cardWidth / 2;
-      let y = info.point.y - offsetY - cardHeight / 2;
+      let x = info.point.x - offsetX;
+      let y = info.point.y - offsetY;
 
-      if (x < 0) x = 0;
-      if (x > maxX) x = maxX;
-      if (y < TOP_OFFSET) y = TOP_OFFSET;
-      if (y > maxY) y = maxY;
+      // Allow dragging to the left edge and top (including the fixed area)
+      x = Math.max(0, Math.min(x, clientWidth - cardWidth));
+      y = Math.max(0, Math.min(y, clientHeight - cardHeight));
 
       setPositions(prev => ({
         ...prev,
@@ -160,13 +163,25 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
       }));
 
       delete dragOriginRef.current[cardId];
+
+      const dragEndTime = Date.now();
+      const dragDuration = dragEndTime - dragStartTimeRef.current;
+
+      if (dragDuration < CLICK_THRESHOLD && !isDragging[cardId]) {
+        handleCardClick(cardId);
+      }
+
       setIsDragging(prev => ({ ...prev, [cardId]: false }));
     }
   };
 
   const handleCardClick = useCallback((cardId: number) => {
-    setSelectedCardId(cardId);
-  }, []);
+    if (!isDragging[cardId]) {
+      setSelectedCardId(cardId);
+      // Move the clicked card to the end of the zIndexOrder array
+      setZIndexOrder(prev => [...prev.filter(id => id !== cardId), cardId]);
+    }
+  }, [isDragging]);
 
   const handleClosePopup = useCallback(() => {
     setSelectedCardId(null);
@@ -175,12 +190,13 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
   const getCardStyle = (card: CardType) => {
     const position = positions[card.id];
     const scale = view === 'interactive' ? 0.5 : 1;
+    const zIndex = zIndexOrder.indexOf(card.id);
     return {
       position: 'absolute' as 'absolute',
       left: position?.x || 0,
       top: position?.y || 0,
       transform: `rotate(${position?.rotation || 0}deg) scale(${scale})`,
-      zIndex: selectedCardId === card.id ? 10 : 1,
+      zIndex: zIndex,
       width: view === 'interactive' ? '150px' : '300px',
       height: view === 'interactive' ? '200px' : '400px',
     };
@@ -219,7 +235,6 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
     return {};
   }, [view, state.filteredCards.length]);
 
-  
   return (
     <div className="relative w-full">
       <motion.div 
@@ -257,7 +272,7 @@ const CardViewTransition: React.FC<CardViewTransitionProps> = ({ view }) => {
                 onDrag={(_, info) => handleDrag(card.id, _, info)}
                 onDragEnd={(_, info) => handleDragEnd(card.id, _, info)}
                 onClick={() => handleCardClick(card.id)}
-                whileDrag={{ scale: 0.6, zIndex: 10, transition: { duration: 0 } }}
+                whileDrag={{ scale: 0.6, zIndex: state.filteredCards.length, transition: { duration: 0 } }}
               >
                 <Card
                   card={card}

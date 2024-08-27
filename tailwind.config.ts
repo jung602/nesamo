@@ -11,6 +11,15 @@ const config: Config = {
       fontFamily: {
         'handwriting': ['Caveat', 'cursive'],
       },
+      keyframes: {
+        'curtain-down': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(0)' },
+        }
+      },
+        animation: {
+          'curtain-down': 'curtain-down 0.5s ease-in-out',
+        },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

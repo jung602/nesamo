@@ -33,6 +33,11 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
     }
   };
 
+  const iconVariants = {
+    initial: { rotateX: 0 },
+    animate: { rotateX: 180 }
+  };
+
   const itemVariants = {
     hidden: { opacity: 0, y: -20, rotate: 0 },
     visible: (i: number) => ({
@@ -53,8 +58,13 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
   return (
     <div className="mb-4 text-sm">
       <div className="flex justify-center mb-2">
-        <button onClick={toggleAllCategories} className="p-2 border bg-white/10 rounded-full hover:bg-black/10 backdrop-blur-xl ">
-          <img src="filter.svg" alt="Filter" className="w-6 h-6" />
+        <button onClick={toggleAllCategories} 
+        className="p-2 border border-gray/50 bg-white/50 rounded-full hover:bg-black/10 backdrop-blur-xl ">
+          <img 
+            src={isExpanded ? "close.svg" : "filter.svg"} 
+            alt={isExpanded ? "Close" : "Filter"} 
+            className={isExpanded ? "w-6 h-6 p-1" : "w-6 h-6"} 
+          />
         </button>
       </div>
       <motion.div className="flex flex-col justify-center gap-2 mb-2">
