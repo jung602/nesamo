@@ -24,25 +24,27 @@ const Home: NextPage = () => {
     <DndProvider backend={HTML5Backend}>
       <AppProvider>
         <div className="min-h-screen bg-white">
-          <header className="backdrop-blur-xl bg-white/30 fixed top-0 left-0 right-0 screen border-b border-solid border-black z-30">
-            <div className="max-w-7xl mx-4 pt-6 pb-1 flex justify-between items-center">
-            <a href="/">
-              <h1 className="text-base font-medium text-black">
-                To All The Boys.
-              </h1>
-              </a>
-              <button
-                onClick={handleViewChange}
-                className="text-sm text-black px-4 py-1"
-              >
-                {view === 'grid' ? 'B' : 'A'} View
-              </button>
-              <button
-                onClick={handleDataToggle}
-                className="text-sm text-black px-4 py-1"
-              >
-                {showData ? 'Cards' : 'Data'}
-              </button>
+          <header className="w-screen flex justify-center backdrop-blur-xl bg-white/30 fixed top-0 left-0 right-0 screen border-b border-solid border-black z-30">
+            <div className="max-w-screen-xl w-full mx-4 pt-6 pb-1 flex justify-between items-center">
+                <a 
+                href="/"
+                className="flex-none text-base font-medium text-black">
+                  <h1>
+                    To All The Boys.
+                  </h1>
+                </a>
+                <button
+                  onClick={handleViewChange}
+                  className="grow text-sm text-right text-black px-4 py-1"
+                >
+                  {view === 'grid' ? 'B' : 'A'} View
+                </button>
+                <button
+                  onClick={handleDataToggle}
+                  className="flex-none text-sm text-black px-4 py-1"
+                >
+                  {showData ? 'Cards' : 'Data'}
+                </button>
             </div>
           </header>
           <main>
