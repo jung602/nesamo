@@ -23,7 +23,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         console.log('Card component clicked:', card.id); // 디버깅을 위한 로그
         onClick();
       }}
-      className="bg-white rounded border border-solid border-grey-100
+      className="relative bg-white rounded border border-solid border-slate-100
       overflow-hidden cursor-pointer shadow-sm 
       transform transition-all duration-200 ease-in-out 
       hover:shadow-xl hover:-translate-y-1"
@@ -34,7 +34,16 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         rotate: `${randomRotation}deg`,
       }}
     >
-      <div className="bg-white h-full flex flex-col">
+      <div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url('/texture.jpg')`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.2,  // 10% opacity
+        }}
+      ></div>
+      <div className="relative z-10 h-full flex flex-col">
         <motion.img 
           src={card.thumbnailImage} 
           alt={card.name} 

@@ -161,11 +161,14 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   };
 
   return (
-    <div className={`fixed inset-0 bg-white overflow-auto transition-transform duration-500 ease-in-out ${
-      isVisible ? 'translate-y-0' : '-translate-y-full'
-    } ${isAnimating ? 'animate-curtain-down' : ''}`} style={{ zIndex: 30 }}>
+    <div className={`fixed inset-0 bg-white overflow-auto transition-all${
+      isVisible ? 'opacity-1 translate-y-0' : '-translate-y-full'
+    } ${isAnimating ? 'animate-curtain-down' : 'opacity-1'}`} style={{ zIndex: 50 }}>
       <div className="p-4 max-w-7xl mx-auto pt-20">
-        <h1 className="text-3xl font-bold mb-6">Data Visualization Dashboard</h1>
+        <h1 className="text-xl font-bold mb-6">To All The Boys I've Loved Before</h1>
+        <p className="text-s mb-12">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who’ve ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
+        <br /> Each character is tagged with their looks, social background, and personality traits. I’ve even put together some data visualizations to analyze my taste—turns out I’ve got a type, and I’m not ashamed to admit it.
+        <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you’re curious, but no promises you’ll come out the same.</p>
 
         {/* 1. Most used tags */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">

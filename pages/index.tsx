@@ -32,7 +32,7 @@ const Home: NextPage = () => {
                   To All The Boys.
                 </h1>
             </a>
-            
+
             <div className="z-20 max-w-screen-xl w-full mx-4 flex justify-between items-center">
                 <button
                   onClick={handleViewChange}
@@ -48,9 +48,15 @@ const Home: NextPage = () => {
                 </button>
             </div>
           </header>
-          <main>
-            <CardViewTransition view={view} />
-            <DataVisualizationDashboard isVisible={showData} />
+          <main className="relative">
+            <div className={`transition-opacity duration-300 ${showData ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+              <CardViewTransition view={view} />
+            </div>
+            {showData && (
+              <div className="absolute inset-0 z-10">
+                <DataVisualizationDashboard isVisible={showData} />
+              </div>
+            )}
           </main>
         </div>
       </AppProvider>
