@@ -4,7 +4,6 @@ import { cardData, Card } from '../data/cardData';
 import { featureTagData, getAllTags, getCategoryColor } from '../data/featureTagData';
 import CardPopupWrapper from './CardPopupWrapper';
 
-
 const COLORS = [
   'rgb(255 255 255)',   // bg-white
   'rgb(248 250 252)',   // bg-slate-50
@@ -23,38 +22,22 @@ const COLORS = [
 const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [animationProgress, setAnimationProgress] = useState(0);
+  const [isContentVisible, setIsContentVisible] = useState(false);
 
   const allTags = useMemo(() => getAllTags(), []);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isVisible) {
-      setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 500);
-      return () => clearTimeout(timer);
+      setIsContentVisible(false);
+      timer = setTimeout(() => {
+        setIsContentVisible(true);
+      }, 500);
+    } else {
+      setIsContentVisible(false);
     }
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (isVisible) {
-      setAnimationProgress(0);
-      const animationDuration = 1000; // 1 second
-      const interval = 16; // Approximately 60 fps
-      const steps = animationDuration / interval;
-      let step = 0;
-
-      const animationTimer = setInterval(() => {
-        step++;
-        setAnimationProgress(step / steps);
-        if (step >= steps) {
-          clearInterval(animationTimer);
-        }
-      }, interval);
-
-      return () => clearInterval(animationTimer);
-    }
+    return () => clearTimeout(timer);
   }, [isVisible]);
 
   // 1. Most used tags
@@ -129,7 +112,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     return (
       <text
         x={x + width / 2}
-        y={y - 5}  // Position the label above the bar
+        y={y - 5}
         fill={COLORS[9]}
         textAnchor="middle"
         dominantBaseline="bottom"
@@ -139,7 +122,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
       </text>
     );
   };
-  
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -161,14 +144,14 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   };
 
   return (
-    <div className={`fixed inset-0 bg-white overflow-auto transition-all${
-      isVisible ? 'opacity-1 translate-y-0' : '-translate-y-full'
-    } ${isAnimating ? 'animate-curtain-down' : 'opacity-1'}`} style={{ zIndex: 50 }}>
-      <div className="p-4 max-w-7xl mx-auto pt-20">
+    <div className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
+      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+    }`} style={{ zIndex: 50 }}>
+      <div className={`p-4 max-w-7xl mx-auto pt-20 transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}>
         <h1 className="text-xl font-bold mb-6">To All The Boys I've Loved Before</h1>
-        <p className="text-s mb-12">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who’ve ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
-        <br /> Each character is tagged with their looks, social background, and personality traits. I’ve even put together some data visualizations to analyze my taste—turns out I’ve got a type, and I’m not ashamed to admit it.
-        <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you’re curious, but no promises you’ll come out the same.</p>
+        <p className="text-s mb-12 w-1/2">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who've ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
+        <br /> Each character is tagged with their looks, social background, and personality traits. I've even put together some data visualizations to analyze my taste—turns out I've got a type, and I'm not ashamed to admit it.
+        <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you're curious, but no promises you'll come out the same.</p>
 
         {/* 1. Most used tags */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
@@ -202,7 +185,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={tagUsageData.find(c => c.category === selectedCategory)?.data || []}>
-
               <Tooltip content={<CustomTooltip />} />
               <Bar
                 dataKey="count"

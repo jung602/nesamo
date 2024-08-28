@@ -23,7 +23,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         console.log('Card component clicked:', card.id); // 디버깅을 위한 로그
         onClick();
       }}
-      className="relative bg-white rounded border border-solid border-slate-100
+      className="relative bg-white rounded border border-solid border-slate-150
       overflow-hidden cursor-pointer shadow-sm 
       transform transition-all duration-200 ease-in-out 
       hover:shadow-xl hover:-translate-y-1"
@@ -32,6 +32,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         height: '400px', 
         padding: '10px',
         rotate: `${randomRotation}deg`,
+        boxShadow: 'inset 0 -.5px 3px rgba(0, 0, 0, 0.15)'
       }}
     >
       <div 
