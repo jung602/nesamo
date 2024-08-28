@@ -24,27 +24,27 @@ const Home: NextPage = () => {
       <AppProvider>
         <div className="min-h-screen">
           <header 
-          className="w-screen flex justify-center backdrop-blur-xl bg-white/30 fixed top-0 left-0 right-0 screen border-b z-50">
+          className="w-screen flex justify-center backdrop-blur-xl bg-white/30 pt-4 pb-2 fixed top-0 left-0 right-0 screen border-b z-50">
             <a 
               href="/"
-              className="absolute -translate-x-1/2 left-1/2 text-base font-medium text-black pt-4 z-50">
+              className="absolute -translate-x-1/2 left-1/2 text-base font-medium text-black pt-1 z-50">
                 <h1>
                   To All The Boys.
                 </h1>
             </a>
             
-            <div className="z-20 max-w-screen-xl w-full mx-4 pt-1 pb-1 flex justify-between items-center">
+            <div className="z-20 max-w-screen-xl w-full mx-4 flex justify-between items-center">
                 <button
                   onClick={handleViewChange}
-                  className={showData ? "opacity-0 w-0 h-0" : "flex justify-center items-center p-2 w-11 h-11 z-50"}
+                  className={showData ? "opacity-0 w-0 h-0" : "flex justify-center items-center w-8 h-8 z-50 rounded-full hover:bg-slate-100"}
                 >
-                  {view === 'grid' ? <Image src="./suffle.svg" alt="Shuffle" width={24} height={24}/> : <Image src="./list.svg" alt="List" width={24} height={24}/>}
+                  {view === 'grid' ? <Image src="./suffle.svg" alt="Shuffle" width={20} height={20}/> : <Image src="./list.svg" alt="List" width={20} height={20}/>}
                 </button>
                 <button
                   onClick={handleDataToggle}
-                  className="flex justify-center items-center p-2 w-11 h-11 z-50"
+                  className="flex justify-center items-center w-8 h-8 z-50 rounded-full hover:bg-slate-100"
                 >
-                  {showData ? <Image src="./close.svg" style={{marginLeft:'1px'}} alt="Close" width={16} height={16}/> : <Image src="./data.svg" alt="Data" width={24} height={24}/>}
+                  {showData ? <Image src="./close.svg" style={{marginLeft:'1px'}} alt="Close" width={14} height={14}/> : <Image src="./data.svg" alt="Data" width={20} height={20}/>}
                 </button>
             </div>
           </header>

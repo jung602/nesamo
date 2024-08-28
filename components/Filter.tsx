@@ -59,7 +59,7 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
     <div className="mb-4 text-sm">
       <div className="flex justify-center mb-2">
         <button onClick={toggleAllCategories} 
-        className="p-2 border border-gray/50 bg-white/50 rounded-full hover:bg-black/10 backdrop-blur-xl">
+        className="p-2 border border-gray/50 bg-white/50 rounded-full hover:bg-slate-100 backdrop-blur-xl">
           <img 
             src={isExpanded ? "close.svg" : "filter.svg"} 
             alt={isExpanded ? "Close" : "Filter"} 
@@ -81,8 +81,8 @@ const Filter: React.FC<FilterProps> = ({ featureTags, activeFilters, onFilterCha
             >
               <motion.button
                 onClick={() => handleCategoryClick(category.name)}
-                className={`px-3 py-2 backdrop-blur-lg rounded-md border borderbg-white/[.05] hover:hover:backdrop-blur-sm ${
-                  selectedCategory === category.name ? 'bg-black text-white' : 'bg-white text-black'
+                className={`px-3 py-2 backdrop-blur-lg rounded-md border border hover:hover:backdrop-blur-sm ${
+                  selectedCategory === category.name ? 'bg-black text-white' : 'bg-slate-100 text-black'
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

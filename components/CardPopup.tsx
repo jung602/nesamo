@@ -2,7 +2,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card as CardType } from '../data/cardData';
 import { getCategoryColor } from '../data/featureTagData';
-import { X } from 'lucide-react';
 import Image from 'next/image';
 
 interface CardPopupProps {
@@ -18,7 +17,7 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50"
+        className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-[60]"
         onClick={onClose}
       >
         <motion.div 
@@ -68,7 +67,7 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
             onClick={onClose}
             className="absolute -bottom-10 right-1/2 translate-x-1/2 p-2 rounded-full bg-white/70 border-b backdrop-blur-xl hover:rotate-12 hover:bg-white/50 transition-all"
           >
-          <Image src="./close.svg" alt="Close" width={14} height={14}/>
+            <Image src="./close.svg" alt="Close" width={14} height={14}/>
           </button>
         </motion.div>
       </motion.div>
