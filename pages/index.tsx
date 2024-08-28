@@ -36,13 +36,13 @@ const Home: NextPage = () => {
             <div className="z-20 max-w-screen-xl w-full mx-4 pt-1 pb-1 flex justify-between items-center">
                 <button
                   onClick={handleViewChange}
-                  className={showData ? "opacity-0 w-0 h-0" : "p-3 w-11 h-11 z-50"}
+                  className={showData ? "opacity-0 w-0 h-0" : "flex justify-center items-center p-2 w-11 h-11 z-50"}
                 >
                   {view === 'grid' ? <Image src="./suffle.svg" alt="Shuffle" width={24} height={24}/> : <Image src="./list.svg" alt="List" width={24} height={24}/>}
                 </button>
                 <button
                   onClick={handleDataToggle}
-                  className="p-3 w-11 h-11 z-50"
+                  className="flex justify-center items-center p-2 w-11 h-11 z-50"
                 >
                   {showData ? <Image src="./close.svg" style={{marginLeft:'1px'}} alt="Close" width={16} height={16}/> : <Image src="./data.svg" alt="Data" width={24} height={24}/>}
                 </button>
