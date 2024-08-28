@@ -10,27 +10,27 @@ export type Card = {
   export const cardData: Card[] = [
     {
       id: 1,
-      thumbnailImage: "/images/card1.jpg",
+      thumbnailImage: "./thumbs/dangbo.png",
       name: "Dangbo",
-      heightWeight: "180cm / 70kg",
-      universe: "우주1",
-      featureTags: ["성격이 나쁨", "배경1", "포지션1"]
+      heightWeight: "187cm",
+      universe: "화산귀환",
+      featureTags: ["Royal", "Black Hair", "Supporter"]
     },
     {
       id: 2,
-      thumbnailImage: "/images/card2.jpg",
+      thumbnailImage: "./thumbs/nezu.png",
       name: "Nezu",
-      heightWeight: "165cm / 55kg",
-      universe: "우주2",
-      featureTags: ["착함", "배경2", "포지션2"]
+      heightWeight: "173cm",
+      universe: "Pokémon Sword and Shield",
+      featureTags: ["Black Hair", "배경2", "포지션2"]
     },
     {
       id: 3,
-      thumbnailImage: "/images/card3.jpg",
+      thumbnailImage: "./thumbs/kibana.png",
       name: "Kibana",
-      heightWeight: "165cm / 55kg",
-      universe: "우주2",
-      featureTags: ["착함", "배경2", "포지션2"]
+      heightWeight: "203cm",
+      universe: "Pokémon Sword and Shield",
+      featureTags: ["Black Hair", "배경2", "포지션2"]
     },
     // 추가 카드 데이터...
   ];

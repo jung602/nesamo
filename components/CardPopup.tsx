@@ -17,7 +17,7 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-[60]"
+        className="fixed inset-0 bg-slate-900 bg-opacity-80 flex items-center justify-center p-4 z-[60] w-full h-full"
         onClick={onClose}
       >
         <motion.div 
@@ -29,25 +29,29 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
             stiffness: 300,
             damping: 25
           }}
-          className="bg-white rounded max-w-md w-full relative shadow-xl"
-          style={{ 
-            width: '350px', 
-            height: '450px', 
-            padding: '10px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
-          }}
+          className="bg-white rounded relative shadow-xl p-2 w-8/12 h-4/6 max-lg:w-11/12 max-lg:h-3/4"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="bg-gray-100 h-full flex flex-col">
+          <div 
+            className="absolute inset-0 z-0"
+            style={{
+              backgroundImage: `url('./texture.jpg')`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+              opacity: 0.2,
+            }}
+          ></div>
+          <div className="h-full flex flex-row max-lg:flex-col">
+            <div className="basis-1/2 w-full text-center bg-slate-900 shadow-inner border object-cover overflow-hidden">
             <img 
               src={card.thumbnailImage} 
-              alt={card.name} 
-              className="w-full h-[300px] object-cover"
+              alt={card.name}
             />
-            <div className="p-4 flex-grow flex flex-col justify-between">
-              <h2 className="text-3xl font-handwriting text-gray-800 mb-2">{card.name}</h2>
-              <p className="text-sm text-gray-600 mb-1">{card.heightWeight}</p>
-              <p className="text-sm text-gray-600 mb-2">Universe: {card.universe}</p>
+            </div>
+            <div className="p-8 flex-grow flex flex-col items-baseline justify-end">
+              <h2 className="text-4xl font-bold text-slate-900">{card.name}</h2>
+              <p className="text-lg font-medium text-slate-600 mb-2">{card.universe}</p>
+              <p className="text-sm text-gray-600 mb-10">{card.heightWeight}</p>
               <div className="mb-2">
                 <div className="flex flex-wrap gap-1">
                   {card.featureTags.map((tag, index) => (

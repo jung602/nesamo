@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'handwriting': ['Caveat', 'cursive'],
+        'handwriting': ['Permanent Marker', 'cursive'],
       },
       keyframes: {
         'curtain-down': {

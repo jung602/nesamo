@@ -5,6 +5,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet"></link>
+      <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet"></link>
       <body>
         <Main />
         <NextScript />

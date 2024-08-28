@@ -24,18 +24,23 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isContentVisible, setIsContentVisible] = useState(false);
+  const [isCurtainDown, setIsCurtainDown] = useState(false);
 
   const allTags = useMemo(() => getAllTags(), []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isVisible) {
+      setIsCurtainDown(true);
       setIsContentVisible(false);
       timer = setTimeout(() => {
         setIsContentVisible(true);
-      }, 500);
+      }, 500); // 커튼 애니메이션이 끝난 후 컨텐츠를 보이게 함
     } else {
       setIsContentVisible(false);
+      timer = setTimeout(() => {
+        setIsCurtainDown(false);
+      }, 300); // 컨텐츠가 사라진 후 커튼을 올림
     }
     return () => clearTimeout(timer);
   }, [isVisible]);
@@ -116,7 +121,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
         fill={COLORS[9]}
         textAnchor="middle"
         dominantBaseline="bottom"
-        fontSize={12}
+        fontSize={24}
       >
         {value}
       </text>
@@ -142,14 +147,18 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   const handleClosePopup = () => {
     setSelectedCard(null);
   };
-
+  
   return (
-    <div className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
-      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
-    }`} style={{ zIndex: 50 }}>
+    <div 
+      className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
+        isCurtainDown ? 'translate-y-0' : '-translate-y-full'
+      } ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      style={{ zIndex: 50 }}
+    >
       <div className={`p-4 max-w-7xl mx-auto pt-20 transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}>
+
         <h1 className="text-xl font-bold mb-6">To All The Boys I've Loved Before</h1>
-        <p className="text-s mb-12 w-1/2">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who've ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
+        <p className="text-s mb-12 w-1/2 max-lg:w-full">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who've ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
         <br /> Each character is tagged with their looks, social background, and personality traits. I've even put together some data visualizations to analyze my taste—turns out I've got a type, and I'm not ashamed to admit it.
         <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you're curious, but no promises you'll come out the same.</p>
 
@@ -159,9 +168,9 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
           <div className="flex gap-2 justify-around">
             {tagCounts.map(({ tag, count }, index) => (
               <div key={tag} className="grow text-center bg-slate-100 p-3 rounded">
-                <div className="text-4xl font-bold">{index + 1}</div>
+                <div className="text-sm font-bold">{index + 1}</div>
                 <div className="text-lg">{tag}</div>
-                <div className="text-sm text-gray-600">Used {count} times</div>
+                <div className="text-3xl font-handwriting text-gray-600">{count}</div>
               </div>
             ))}
           </div>
@@ -174,8 +183,8 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
             {tagUsageData.map(category => (
               <button
                 key={category.category}
-                className={`px-4 py-2 rounded-full mr-2 ${
-                  selectedCategory === category.category ? 'bg-slate-500 text-white' : 'bg-slate-200'
+                className={`px-2 py-1 rounded-md mr-2 ${
+                  selectedCategory === category.category ? 'bg-slate-900 text-white' : 'bg-slate-100 border'
                 }`}
                 onClick={() => setSelectedCategory(category.category)}
               >
@@ -196,7 +205,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
                 <LabelList
                   dataKey="tag"
                   content={<CustomBarLabel />}
-                  position="top"
                 />
               </Bar>
             </BarChart>
