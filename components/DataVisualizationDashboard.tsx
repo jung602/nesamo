@@ -1,21 +1,20 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend, LabelList } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { cardData, Card } from '../data/cardData';
 import { featureTagData, getAllTags, getCategoryColor } from '../data/featureTagData';
 import CardPopupWrapper from './CardPopupWrapper';
-import HorizontalBarChart from './HorizontalBarChart'
+import HorizontalBarChart from './HorizontalBarChart';
 
 const COLORS = [
-  'rgb(148 163 184)',   // bg-slate-400
-  'rgb(100 116 139)',   // bg-slate-500
-  'rgb(71 85 105)',     // bg-slate-600
-  'rgb(51 65 85)',      // bg-slate-700
-  'rgb(30 41 59)',      // bg-slate-800
-  'rgb(15 23 42)',      // bg-slate-900
-  'rgb(2 6 23)',        // bg-slate-950
+  'rgb(148 163 184)', 'rgb(100 116 139)', 'rgb(71 85 105)', 'rgb(51 65 85)',
+  'rgb(30 41 59)', 'rgb(15 23 42)', 'rgb(2 6 23)',
 ];
 
-const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
+interface DataVisualizationDashboardProps {
+  isVisible: boolean;
+}
+
+const DataVisualizationDashboard: React.FC<DataVisualizationDashboardProps> = ({ isVisible }) => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -31,17 +30,16 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
       setIsContentVisible(false);
       timer = setTimeout(() => {
         setIsContentVisible(true);
-      }, 500); // 커튼 애니메이션이 끝난 후 컨텐츠를 보이게 함
+      }, 500);
     } else {
       setIsContentVisible(false);
       timer = setTimeout(() => {
         setIsCurtainDown(false);
-      }, 300); // 컨텐츠가 사라진 후 커튼을 올림
+      }, 300);
     }
     return () => clearTimeout(timer);
   }, [isVisible]);
 
-  // 1. Most used tags
   const tagCounts = useMemo(() => {
     const counts: { [key: string]: number } = {};
     cardData.forEach(card => {
@@ -55,14 +53,13 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
       .map(([tag, count]) => ({ tag, count }));
   }, []);
 
-  // 2. Tag usage bar chart data
   const tagUsageData = useMemo(() => {
     return featureTagData.map(category => ({
       category: category.name,
       data: category.tags.map(tag => ({
         tag,
         count: cardData.filter(card => card.featureTags.includes(tag)).length
-      })).sort((a, b) => b.count - a.count) // Sort by count in descending order
+      })).sort((a, b) => b.count - a.count)
     }));
   }, []);
 
@@ -70,14 +67,12 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     return Math.max(...tagUsageData.flatMap(category => category.data.map(item => item.count)));
   }, [tagUsageData]);
 
-  // Set the initial selected category
   useEffect(() => {
     if (tagUsageData.length > 0 && !selectedCategory) {
       setSelectedCategory(tagUsageData[0].category);
     }
   }, [tagUsageData, selectedCategory]);
 
-  // 3. Tag category keyword pie charts data
   const categoryKeywordData = useMemo(() => {
     return featureTagData.map(category => {
       const keywordCounts: { [key: string]: number } = {};
@@ -99,7 +94,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     });
   }, []);
 
-  // 4. Filtered card list
   const filteredCards = useMemo(() => {
     return cardData.filter(card =>
       activeFilters.length === 0 || activeFilters.every(filter => card.featureTags.includes(filter))
@@ -112,35 +106,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     );
   };
 
-  const CustomBarLabel = (props: any) => {
-    const { x, y, width, value } = props;
-    return (
-      <text
-        x={x + width + 5}
-        y={y + 15}
-        fill={COLORS[9]}
-        textAnchor="start"
-        dominantBaseline="middle"
-        fontSize={12}
-      >
-        {value}
-      </text>
-    );
-  };
-
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white border border-gray-300 p-2 rounded shadow">
-          <p>{payload[0].payload.tag}</p>
-          <p>Count: {payload[0].value}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const handleCardClick = (card: Card) => {
     setSelectedCard(card);
   };
@@ -148,7 +113,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   const handleClosePopup = () => {
     setSelectedCard(null);
   };
-  
+
   return (
     <div className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
       isCurtainDown ? 'translate-y-0' : '-translate-y-full'
@@ -156,13 +121,13 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     style={{ zIndex: 50 }}
     >
       <div className={`p-4 max-w-7xl mx-auto pt-20 transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}>
-
         <h1 className="text-xl font-bold mb-6">To All The Boys I've Loved Before</h1>
-        <p className="text-s mb-12 w-1/2 max-lg:w-full">Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who've ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
-        <br /> Each character is tagged with their looks, social background, and personality traits. I've even put together some data visualizations to analyze my taste—turns out I've got a type, and I'm not ashamed to admit it.
-        <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you're curious, but no promises you'll come out the same.</p>
+        <p className="text-s mb-12 w-1/2 max-lg:w-full">
+          Inspired by the Netflix movie To All the Boys I've Loved Before, this site is my personal archive of all the virtual guys who've ever caught my eye. Think of it as a digital lineup of my fictional crushes, laid out like model Polaroids for your viewing pleasure.
+          <br /> Each character is tagged with their looks, social background, and personality traits. I've even put together some data visualizations to analyze my taste—turns out I've got a type, and I'm not ashamed to admit it.
+          <br /> What started as a bit of a joke has turned into a full-on collection. Dive in if you're curious, but no promises you'll come out the same.
+        </p>
 
-        {/* 1. Most used tags */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
           <h2 className="text-xl text-center font-semibold mb-4">Ultimate Bias</h2>
           <div className="flex gap-2 justify-around">
@@ -176,7 +141,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
           </div>
         </section>
 
-        {/* 2. Tag usage bar chart */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
           <h2 className="text-xl text-center font-semibold mb-4">Taste Rank</h2>
           <div className="text-sm flex justify-center mb-4">
@@ -192,13 +156,14 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
               </button>
             ))}
           </div>
-          <HorizontalBarChart 
-            data={tagUsageData.find(c => c.category === selectedCategory)?.data || []}
-            maxValue={maxTagCount}
-          />
+          {selectedCategory && (
+            <HorizontalBarChart 
+              data={tagUsageData.find(c => c.category === selectedCategory)?.data || []}
+              maxValue={maxTagCount}
+            />
+          )}
         </section>
 
-        {/* 3. Tag category keyword pie charts */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
           <h2 className="text-xl text-center font-semibold mb-4">Taste Stats</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -235,7 +200,6 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
           </div>
         </section>
 
-        {/* 4. Filtered card list */}
         <section className="mb-8 rounded-md p-3">
           <h2 className="text-xl text-center font-semibold mb-4 text-slate-500 p-2 border-slate-200 border-b">Data List</h2>
           <ul className="space-y-3">
@@ -251,7 +215,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
                     <span
                       key={tag}
                       className="px-2 py-1 rounded text-xs bg-slate-900 text-white"
-                      style={{ backgroundColor: getCategoryColor(tag) || COLORS[9] }}
+                      style={{ backgroundColor: getCategoryColor(tag) || COLORS[6] }}
                     >
                       {tag}
                     </span>
@@ -263,11 +227,11 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
         </section>
 
         {selectedCard && (
-        <CardPopupWrapper 
-          card={selectedCard}
-          onClose={handleClosePopup}
-        />
-      )}
+          <CardPopupWrapper 
+            card={selectedCard}
+            onClose={handleClosePopup}
+          />
+        )}
       </div>
     </div>
   );
