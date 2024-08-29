@@ -44,18 +44,19 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
           backgroundImage: `url('./texture.jpg')`,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.2,
+          opacity: 0.4,
         }}
       ></div>
       <div className="relative z-10 h-full flex flex-col p-2">
         <motion.img 
           src={card.thumbnailImage} 
           alt={card.name} 
-          className="shadow-inner border w-full h-[300px] object-cover bg-gray-100"
+          className="shadow-inner border w-full h-[300px] object-cover 
+          bg-[radial-gradient(rgba(51,65,85,.2)_0%,rgba(2,6,23,.3)_100%)]"
         />
         <motion.div className="p-4 flex-grow flex flex-col justify-between relative overflow-hidden">
           <motion.h3 
-            className="text-3xl font-semibold font-handwriting text-black/70 mb-2 absolute"
+            className="text-3xl font-semibold font-handwriting text-black/75 mb-2 absolute"
             style={{
               left: '50%',
               top: '50%',

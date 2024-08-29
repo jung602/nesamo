@@ -49,9 +49,10 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
             />
             </div>
             <div className="p-8 flex-grow flex flex-col items-baseline justify-end">
-              <h2 className="text-4xl font-bold text-slate-900">{card.name}</h2>
+              <h2 className="text-4xl font-handwriting font-bold text-slate-900">{card.name}</h2>
+              <h2 className="text-lg font-handwritingCJK font-bold text-slate-900">{card.originName}</h2>
               <p className="text-lg font-medium text-slate-600 mb-2">{card.universe}</p>
-              <p className="text-sm text-gray-600 mb-10">{card.heightWeight}</p>
+              <p className="text-sm text-gray-600 mb-10">{card.height}</p>
               <div className="mb-2">
                 <div className="flex flex-wrap gap-1">
                   {card.featureTags.map((tag, index) => (

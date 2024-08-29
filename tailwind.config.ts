@@ -9,7 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'handwriting': ['Permanent Marker', 'cursive'],
+        'handwriting': ['Reenie Beanie', 'cursive'],
+        'handwritingCJK': ['Nanum Pen Script', 'cursive'],
       },
       keyframes: {
         'curtain-down': {
