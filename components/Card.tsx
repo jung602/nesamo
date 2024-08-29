@@ -54,16 +54,21 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
           className="shadow-inner border w-full h-[300px] object-cover 
           bg-[radial-gradient(rgba(51,65,85,.2)_0%,rgba(2,6,23,.3)_100%)]"
         />
-        <motion.div className="p-4 flex-grow flex flex-col justify-between relative overflow-hidden">
+        <motion.div className="p-4 flex-grow flex flex-col justify-between relative">
           <motion.h3 
-            className="text-3xl font-semibold font-handwriting text-black/75 mb-2 absolute"
+            className="text-3xl flex font-semibold font-handwriting text-black/75 mb-2 absolute"
             style={{
               left: '50%',
               top: '50%',
               transform: `translate(calc(-50% + ${randomNamePosition.x}px), calc(-50% + ${randomNamePosition.y}px)) rotate(${randomNameRotation}deg)`,
             }}
           >
-            {card.name}
+            <div 
+            className="pr-2"
+            style={{
+              transform: `rotate(${randomNameRotation}deg)`}}
+            >#{card.id}</div>
+            <div>{card.name}</div>
           </motion.h3>
         </motion.div>
       </div>

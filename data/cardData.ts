@@ -1,6 +1,7 @@
 export type Card = {
     id: number;
     thumbnailImage: string;
+    thumbnailImage2: string;
     name: string;
     nameKR: string;
     originName: string;
@@ -13,6 +14,7 @@ export type Card = {
     {
       id: 1,
       thumbnailImage: "./thumbs/dangbo.png",
+      thumbnailImage2: "",
       name: "Dangbo",
       nameKR: "당보",
       originName: "當步",
@@ -23,6 +25,7 @@ export type Card = {
     {
       id: 2,
       thumbnailImage: "./thumbs/nezu.png",
+      thumbnailImage2: "",
       name: "Piers",
       nameKR: "두송",
       originName: "ネズ",
@@ -33,6 +36,7 @@ export type Card = {
     {
       id: 3,
       thumbnailImage: "./thumbs/kibana.png",
+      thumbnailImage2: "",
       name: "Raihan",
       nameKR: "금랑",
       originName: "キバナ",

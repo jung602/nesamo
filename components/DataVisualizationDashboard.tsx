@@ -3,13 +3,9 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveCo
 import { cardData, Card } from '../data/cardData';
 import { featureTagData, getAllTags, getCategoryColor } from '../data/featureTagData';
 import CardPopupWrapper from './CardPopupWrapper';
+import HorizontalBarChart from './HorizontalBarChart'
 
 const COLORS = [
-  'rgb(255 255 255)',   // bg-white
-  'rgb(248 250 252)',   // bg-slate-50
-  'rgb(241 245 249)',   // bg-slate-100
-  'rgb(226 232 240)',   // bg-slate-200
-  'rgb(203 213 225)',   // bg-slate-300
   'rgb(148 163 184)',   // bg-slate-400
   'rgb(100 116 139)',   // bg-slate-500
   'rgb(71 85 105)',     // bg-slate-600
@@ -66,9 +62,13 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
       data: category.tags.map(tag => ({
         tag,
         count: cardData.filter(card => card.featureTags.includes(tag)).length
-      }))
+      })).sort((a, b) => b.count - a.count) // Sort by count in descending order
     }));
   }, []);
+
+  const maxTagCount = useMemo(() => {
+    return Math.max(...tagUsageData.flatMap(category => category.data.map(item => item.count)));
+  }, [tagUsageData]);
 
   // Set the initial selected category
   useEffect(() => {
@@ -116,17 +116,18 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
     const { x, y, width, value } = props;
     return (
       <text
-        x={x + width / 2}
-        y={y - 5}
+        x={x + width + 5}
+        y={y + 15}
         fill={COLORS[9]}
-        textAnchor="middle"
-        dominantBaseline="bottom"
-        fontSize={24}
+        textAnchor="start"
+        dominantBaseline="middle"
+        fontSize={12}
       >
         {value}
       </text>
     );
   };
+
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -149,11 +150,10 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
   };
   
   return (
-    <div 
-      className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
-        isCurtainDown ? 'translate-y-0' : '-translate-y-full'
-      } ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-      style={{ zIndex: 50 }}
+    <div className={`fixed inset-0 bg-white overflow-auto transition-all duration-500 ${
+      isCurtainDown ? 'translate-y-0' : '-translate-y-full'
+    } ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+    style={{ zIndex: 50 }}
     >
       <div className={`p-4 max-w-7xl mx-auto pt-20 transition-opacity duration-300 ${isContentVisible ? 'opacity-100' : 'opacity-0'}`}>
 
@@ -164,7 +164,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
 
         {/* 1. Most used tags */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
-          <h2 className="text-xl text-center font-semibold mb-4">Top 3 Most Used Tags</h2>
+          <h2 className="text-xl text-center font-semibold mb-4">Ultimate Bias</h2>
           <div className="flex gap-2 justify-around">
             {tagCounts.map(({ tag, count }, index) => (
               <div key={tag} className="grow text-center bg-slate-100 p-3 rounded">
@@ -178,8 +178,8 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
 
         {/* 2. Tag usage bar chart */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
-          <h2 className="text-xl text-center font-semibold mb-4">Tag Usage</h2>
-          <div className="flex justify-center mb-4">
+          <h2 className="text-xl text-center font-semibold mb-4">Taste Rank</h2>
+          <div className="text-sm flex justify-center mb-4">
             {tagUsageData.map(category => (
               <button
                 key={category.category}
@@ -192,28 +192,15 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
               </button>
             ))}
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={tagUsageData.find(c => c.category === selectedCategory)?.data || []}>
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="count"
-                fill={COLORS[5]}
-                animationBegin={0}
-                animationDuration={1000}
-                animationEasing="ease-out"
-              >
-                <LabelList
-                  dataKey="tag"
-                  content={<CustomBarLabel />}
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <HorizontalBarChart 
+            data={tagUsageData.find(c => c.category === selectedCategory)?.data || []}
+            maxValue={maxTagCount}
+          />
         </section>
 
         {/* 3. Tag category keyword pie charts */}
         <section className="mb-8 rounded-md bg-slate-50 p-3">
-          <h2 className="text-xl text-center font-semibold mb-4">Tag Categories and Keywords</h2>
+          <h2 className="text-xl text-center font-semibold mb-4">Taste Stats</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {categoryKeywordData.map((category, categoryIndex) => (
               <div key={category.name} className="bg-slate-100 p-4 rounded">
@@ -249,13 +236,13 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
         </section>
 
         {/* 4. Filtered card list */}
-        <section className="mb-8 rounded-md bg-slate-50 p-3">
-          <h2 className="text-xl text-center font-semibold mb-4">Card List</h2>
-          <ul className="space-y-2">
+        <section className="mb-8 rounded-md p-3">
+          <h2 className="text-xl text-center font-semibold mb-4 text-slate-500 p-2 border-slate-200 border-b">Data List</h2>
+          <ul className="space-y-3">
             {filteredCards.map(card => (
               <li
                 key={card.id}
-                className="bg-slate-100 p-4 rounded cursor-pointer hover:bg-slate-200 flex justify-between items-center"
+                className="bg-slate-50 shadow-lg shadow-slate-100 p-4 border border-slate-200 rounded cursor-pointer flex justify-between items-center hover:bg-slate-100 hover:shadow-slate-200"
                 onClick={() => handleCardClick(card)}
               >
                 <span className="font-semibold">{card.name}</span>
@@ -263,7 +250,7 @@ const DataVisualizationDashboard: React.FC<{ isVisible: boolean }> = ({ isVisibl
                   {card.featureTags.map(tag => (
                     <span
                       key={tag}
-                      className="px-2 py-1 rounded text-xs text-white"
+                      className="px-2 py-1 rounded text-xs bg-slate-900 text-white"
                       style={{ backgroundColor: getCategoryColor(tag) || COLORS[9] }}
                     >
                       {tag}
