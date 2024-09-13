@@ -42,7 +42,7 @@ const CardPopup: React.FC<CardPopupProps> = ({ card, onClose }) => {
             }}
           ></div>
           <div className="h-full flex flex-row max-lg:flex-col">
-            <div className="basis-1/2 w-full text-center bg-slate-900 shadow-inner border object-cover overflow-hidden">
+            <div className="basis-1/2 w-full text-center bg-slate-100 shadow-inner border object-cover overflow-hidden">
             <img 
               src={card.thumbnailImage} 
               alt={card.name}
