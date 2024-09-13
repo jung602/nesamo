@@ -51,7 +51,7 @@ const Card: React.FC<CardProps> = ({ card, onClick }) => {
         <motion.img 
           src={card.thumbnailImage} 
           alt={card.name} 
-          className="shadow-inner border w-full h-[300px] object-cover 
+          className="object-left-top shadow-inner border w-full h-[300px] object-cover 
           bg-[radial-gradient(rgba(51,65,85,.2)_0%,rgba(2,6,23,.3)_100%)]"
         />
         <motion.div className="p-4 flex-grow flex flex-col justify-between relative">
